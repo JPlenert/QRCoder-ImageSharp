@@ -7,20 +7,21 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageId>QRCoder.ImageSharp</PackageId>
-    <Version>1.4.3</Version>
+    <PackageId>QRCoder-ImageSharp</PackageId>
+    <Version>0.9.0-1.4.3</Version>
     <Authors>Raffael Herrmann, Joerg Plenert</Authors>
     <PackageOwners>Joerg Plenert</PackageOwners>
     <AssemblyName>QRCoder</AssemblyName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/JPlenert/QRCoder.ImageSharp</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/JPlenert/QRCoder-ImageSharp</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <PackageTags>c# csharp qr qrcoder qrcode qr-generator qr-code-generator</PackageTags>
-    <RepositoryUrl>https://github.com/JPlenert/QRCoder.ImageSharp.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/JPlenert/QRCoder-ImageSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes. Based on ImageSharp to provide plattform independency.</Description>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Copyright>Raffael Herrmann, Joerg Plenert</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
