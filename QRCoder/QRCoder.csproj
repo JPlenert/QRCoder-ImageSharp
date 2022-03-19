@@ -1,33 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;netstandard1.3;netstandard2.0;net5.0;net5.0-windows;net6.0;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0-windows'">$(DefineConstants);NET5_0_WINDOWS</DefineConstants>
-	  <DefineConstants Condition="'$(TargetFramework)' == 'net6.0-windows'">$(DefineConstants);NET6_0_WINDOWS</DefineConstants>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-
   <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageId>QRCoder</PackageId>
-    <Version>1.4.3</Version>
-    <Authors>Raffael Herrmann</Authors>
-    <PackageOwners>Raffael Herrmann</PackageOwners>
+    <PackageId>QRCoder-ImageSharp</PackageId>
+    <Version>0.9.0-1.4.3</Version>
+    <Authors>Raffael Herrmann, Joerg Plenert</Authors>
+    <PackageOwners>Joerg Plenert</PackageOwners>
     <AssemblyName>QRCoder</AssemblyName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/codebude/QRCoder/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/JPlenert/QRCoder-ImageSharp</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <PackageTags>c# csharp qr qrcoder qrcode qr-generator qr-code-generator</PackageTags>
-    <RepositoryUrl>https://github.com/codebude/QRCoder.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/JPlenert/QRCoder-ImageSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes.</Description>
+    <Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes. Based on ImageSharp to provide plattform independency.</Description>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Copyright>Raffael Herrmann, Joerg Plenert</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,29 +29,9 @@
     <None Include="Assets\nuget-readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' or '$(TargetFramework)' == 'net40' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsBase" />
+  <ItemGroup>
+	<PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net5.0-windows' ">
-    <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
-  </ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
-		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-	</ItemGroup>
-
-  <PropertyGroup>
-    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
-    <AutomaticallyUseReferenceAssemblyPackages Condition=" '$(TargetFramework)' == 'net35' ">false</AutomaticallyUseReferenceAssemblyPackages>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>QRCoderStrongName.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
-  </PropertyGroup>
 
 </Project>
