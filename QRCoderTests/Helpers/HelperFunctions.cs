@@ -2,93 +2,140 @@
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
-#if !NETCOREAPP1_1
-using System.Drawing;
-#endif
-#if NETFRAMEWORK || NET5_0_WINDOWS
-using SW = System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-#endif
-
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using Shouldly;
+using QRCoder;
+using System.Reflection;
 
 namespace QRCoderTests.Helpers
 {
     public static class HelperFunctions
     {
-
-#if NETFRAMEWORK || NET5_0_WINDOWS
-        public static BitmapSource ToBitmapSource(DrawingImage source)
-        {
-            DrawingVisual drawingVisual = new DrawingVisual();
-            DrawingContext drawingContext = drawingVisual.RenderOpen();
-            drawingContext.DrawImage(source, new SW.Rect(new SW.Point(0, 0), new SW.Size(source.Width, source.Height)));
-            drawingContext.Close();
-
-            RenderTargetBitmap bmp = new RenderTargetBitmap((int)source.Width, (int)source.Height, 96, 96, PixelFormats.Pbgra32);
-            bmp.Render(drawingVisual);
-            return bmp;
-        }
-
-        public static Bitmap BitmapSourceToBitmap(DrawingImage xamlImg)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(ToBitmapSource(xamlImg)));
-                encoder.Save(ms);
-
-                using (Bitmap bmp = new Bitmap(ms))
-                {
-                    return new Bitmap(bmp);
-                }
-            }
-        }
-#endif 
-
-#if !NETCOREAPP1_1
-        public static string GetAssemblyPath()
-        {
-            return
-#if NET5_0 || NET6_0
-            AppDomain.CurrentDomain.BaseDirectory;
-#elif NET35 || NET452
-            Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Replace("file:\\", "");
-#else
-            Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location).Replace("file:\\", "");
-#endif
-        }
-#endif
-
-
-#if !NETCOREAPP1_1
-        public static string BitmapToHash(Bitmap bmp)
+        public static string BitmapToHash(Image img)
         {
             byte[] imgBytes = null;
             using (var ms = new MemoryStream())
             {
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                img.SaveAsPng(ms);
                 imgBytes = ms.ToArray();
                 ms.Dispose();
             }
             return ByteArrayToHash(imgBytes);
         }
-#endif
+
+        public static Image LoadAssetImage() =>
+            Image.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream("QRCoderTests.assets.noun_software engineer_2909346.png"));
+
+        public static string LoadAssetSvg()
+        {
+            using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream($"QRCoderTests.assets.noun_Scientist_2909361.svg")))
+                return sr.ReadToEnd();
+        }
 
         public static string ByteArrayToHash(byte[] data)
         {
-#if !NETCOREAPP1_1
             var md5 = MD5.Create();
             var hash = md5.ComputeHash(data);
-#else
-            var hash = new SshNet.Security.Cryptography.MD5().ComputeHash(data);
-#endif
             return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
 
         public static string StringToHash(string data)
         {
             return ByteArrayToHash(Encoding.UTF8.GetBytes(data));
+        }
+
+        public static void TestByDecode(Image<Rgba32> image, string desiredContent)
+        {
+            ZXing.ImageSharp.BarcodeReader<Rgba32> reader = new ZXing.ImageSharp.BarcodeReader<Rgba32>();
+            ZXing.Result result = reader.Decode(image);
+            result.Text.ShouldBe(desiredContent);
+        }
+
+        public static void TestByDecode(byte[] pngCodeGfx, string desiredContent)
+        {
+            using (var mStream = new MemoryStream(pngCodeGfx))
+            {
+                ZXing.Result result;
+
+                Image image = Image.Load(mStream);
+                Type pixelType = image.GetType().GetGenericArguments()[0];
+                if (pixelType == typeof(Rgba32))
+                {
+                    ZXing.ImageSharp.BarcodeReader<Rgba32> reader = new ZXing.ImageSharp.BarcodeReader<Rgba32>();
+                    result = reader.Decode(image as Image<Rgba32>);
+                }
+                else if (pixelType == typeof(L8))
+                {
+                    ZXing.ImageSharp.BarcodeReader<L8> reader = new ZXing.ImageSharp.BarcodeReader<L8>();
+                    result = reader.Decode(image as Image<L8>);
+                }
+                else
+                    throw new NotImplementedException(pixelType.ToString());
+                result.Text.ShouldBe(desiredContent);
+            }
+        }
+
+        public static void TestByHash(Image<Rgba32> image, string desiredHash) =>
+            BitmapToHash(image).ShouldBe(desiredHash);
+
+        public static void TestByHash(byte[] pngCodeGfx, string desiredHash)
+        {
+            using (var mStream = new MemoryStream(pngCodeGfx))
+            {
+                var img = Image.Load(mStream);
+                var result = BitmapToHash(img);
+                result.ShouldBe(desiredHash);
+            }
+        }
+
+        public static void TestByHash(string svg, string desiredHash) =>
+            ByteArrayToHash(UTF8Encoding.UTF8.GetBytes(desiredHash));
+
+        public static void TestImageToFile(string path, string testName, Image<Rgba32> image)
+        {
+            if (String.IsNullOrEmpty(path))
+                return;
+
+            image.Save(Path.Combine(path, $"qrtest_{testName}.png"));
+        }
+
+        public static void TestImageToFile(string path, string testName, byte[] data)
+        {
+            if (String.IsNullOrEmpty(path))
+                return;
+            //Used logo is licensed under public domain. Ref.: https://thenounproject.com/Iconathon1/collection/redefining-women/?i=2909346
+            File.WriteAllBytes(Path.Combine(path, $"qrtestPNG_{testName}.png"), data);
+        }
+
+        public static void TestImageToFile(string path, string testName, string svg)
+        {
+            if (String.IsNullOrEmpty(path))
+                return;
+
+            //Used logo is licensed under public domain. Ref.: https://thenounproject.com/Iconathon1/collection/redefining-women/?i=2909346
+            File.WriteAllText(Path.Combine(path, $"qrtestSVG_{testName}.svg"), svg);
+        }
+
+        public static Image<Rgba32> GenerateImage(string content, Func<QRCode, Image<Rgba32>> getGraphic)
+        {
+            QRCodeGenerator gen = new QRCodeGenerator();
+            QRCodeData data = gen.CreateQrCode(content, QRCodeGenerator.ECCLevel.H);
+            return getGraphic(new QRCode(data));
+        }
+
+        public static byte[] GeneratePng(string content, Func<PngByteQRCode, byte[]> getGraphic)
+        {
+            QRCodeGenerator gen = new QRCodeGenerator();
+            QRCodeData data = gen.CreateQrCode(content, QRCodeGenerator.ECCLevel.L);
+            return getGraphic(new PngByteQRCode(data));
+        }
+
+        public static string GenerateSvg(string content, Func<SvgQRCode, string> getGraphic)
+        {
+            QRCodeGenerator gen = new QRCodeGenerator();
+            QRCodeData data = gen.CreateQrCode(content, QRCodeGenerator.ECCLevel.H);
+            return getGraphic(new SvgQRCode(data));
         }
     }
 }

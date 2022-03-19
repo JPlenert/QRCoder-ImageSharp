@@ -1,14 +1,11 @@
-#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using static QRCoder.QRCodeGenerator;
 
 namespace QRCoder
 {
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public class QRCode : AbstractQRCode, IDisposable
     {
         /// <summary>
@@ -16,57 +13,72 @@ namespace QRCoder
         /// </summary>
         public QRCode() { }
 
-        public QRCode(QRCodeData data) : base(data) {}
+        public QRCode(QRCodeData data) : base(data) { }
 
-        public Bitmap GetGraphic(int pixelsPerModule)
+        public Image GetGraphic(int pixelsPerModule)
         {
             return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
         }
 
-        public Bitmap GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true)
+        public Image GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true)
         {
-            return this.GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones);
+            return this.GetGraphic(pixelsPerModule, Color.Parse(darkColorHtmlHex), Color.Parse(lightColorHtmlHex), drawQuietZones);
         }
 
-        public Bitmap GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true)
+        public Image GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true)
         {
-            var size = (this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8)) * pixelsPerModule;
-            var offset = drawQuietZones ? 0 : 4 * pixelsPerModule;
+            int moduleOffset = drawQuietZones ? 0 : 4;
+            int size = (this.QrCodeData.ModuleMatrix.Count - moduleOffset * 2) * pixelsPerModule;
 
-            var bmp = new Bitmap(size, size);
-            using (var gfx = Graphics.FromImage(bmp))
-            using (var lightBrush = new SolidBrush(lightColor))
-            using (var darkBrush = new SolidBrush(darkColor))
+            var image = new Image<Rgba32>(size, size);
+            DrawQRCode(image, pixelsPerModule, moduleOffset, darkColor, lightColor);
+
+            return image;
+        }
+
+        public Image GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Image icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true, Color? iconBackgroundColor = null)
+        {
+            Image<Rgba32> img = GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones) as Image<Rgba32>;
+            if (icon != null && iconSizePercent > 0 && iconSizePercent <= 100)
             {
-                for (var x = 0; x < size + offset; x = x + pixelsPerModule)
-                {
-                    for (var y = 0; y < size + offset; y = y + pixelsPerModule)
-                    {
-                        var module = this.QrCodeData.ModuleMatrix[(y + pixelsPerModule) / pixelsPerModule - 1][(x + pixelsPerModule) / pixelsPerModule - 1];
+                float iconDestWidth = iconSizePercent * img.Width / 100f;
+                float iconDestHeight = iconDestWidth * icon.Height / icon.Width;
+                float iconX = (img.Width - iconDestWidth) / 2;
+                float iconY = (img.Height - iconDestHeight) / 2;
+                var centerDest = new RectangleF(iconX - iconBorderWidth, iconY - iconBorderWidth, iconDestWidth + iconBorderWidth * 2, iconDestHeight + iconBorderWidth * 2);
+                var iconDestRect = new RectangleF(iconX, iconY, iconDestWidth, iconDestHeight);
 
-                        if (module)
+                if (iconBorderWidth > 0)
+                {
+                    if (!iconBackgroundColor.HasValue)
+                        iconBackgroundColor = lightColor;
+                    if (iconBackgroundColor != Color.Transparent)
+                    {
+                        img.ProcessPixelRows(accessor =>
                         {
-                            gfx.FillRectangle(darkBrush, new Rectangle(x - offset, y - offset, pixelsPerModule, pixelsPerModule));
-                        }
-                        else
-                        {
-                            gfx.FillRectangle(lightBrush, new Rectangle(x - offset, y - offset, pixelsPerModule, pixelsPerModule));
-                        }
+                            for (int y = (int)centerDest.Top; y <= (int)centerDest.Bottom; y++)
+                            {
+                                Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+
+                                for (int x = (int)centerDest.Left; x <= (int)centerDest.Right; x++)
+                                {
+                                    pixelRow[x] = iconBackgroundColor ?? lightColor;
+                                }
+                            }
+                        });
                     }
                 }
 
-                gfx.Save();
+                var sizedIcon = icon.Clone(x => x.Resize((int)iconDestWidth, (int)iconDestHeight));
+                img.Mutate(x => x.DrawImage(sizedIcon, new Point((int)iconDestRect.X, (int)iconDestRect.Y), 1));
             }
+            /*
 
-            return bmp;
-        }
 
-        public Bitmap GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Bitmap icon=null, int iconSizePercent=15, int iconBorderWidth = 0, bool drawQuietZones = true, Color? iconBackgroundColor = null)
-        {
             var size = (this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : 8)) * pixelsPerModule;
             var offset = drawQuietZones ? 0 : 4 * pixelsPerModule;
 
-            var bmp = new Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var image = new Image<Rgba32>(size, size);
 
             using (var gfx = Graphics.FromImage(bmp))
             using (var lightBrush = new SolidBrush(lightColor))
@@ -108,10 +120,35 @@ namespace QRCoder
 
                 gfx.Save();
             }
-
-            return bmp;
+            */
+            return img;
         }
 
+        private void DrawQRCode(Image<Rgba32> image, int pixelsPerModule, int moduleOffset, Color darkColor, Color lightColor)
+        {
+            Rgba32[] row = new Rgba32[image.Width];
+
+            image.ProcessPixelRows(accessor =>
+            {
+                for (var modY = moduleOffset; modY < QrCodeData.ModuleMatrix.Count - moduleOffset; modY++)
+                {
+                    // Generate row for this y-Module
+                    for (var modX = moduleOffset; modX < QrCodeData.ModuleMatrix.Count - moduleOffset; modX++)
+                    {
+                        for (var idx = 0; idx < pixelsPerModule; idx++)
+                            row[(modX - moduleOffset) * pixelsPerModule + idx] = this.QrCodeData.ModuleMatrix[modY][modX] ? darkColor : lightColor;
+                    }
+
+                    // Copy the prepared row to the image
+                    for (var idx = 0; idx < pixelsPerModule; idx++)
+                    {
+                        Span<Rgba32> pixelRow = accessor.GetRowSpan((modY - moduleOffset) * pixelsPerModule + idx);
+                        row.CopyTo(pixelRow);
+                    }
+                }
+            });
+        }
+        /*
         internal GraphicsPath CreateRoundedRectanglePath(RectangleF rect, int cornerRadius)
         {
             var roundedRect = new GraphicsPath();
@@ -126,14 +163,12 @@ namespace QRCoder
             roundedRect.CloseFigure();
             return roundedRect;
         }
+        */
     }
 
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class QRCodeHelper
     {
-        public static Bitmap GetQRCode(string plainText, int pixelsPerModule, Color darkColor, Color lightColor, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, Bitmap icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true)
+        public static Image GetQRCode(string plainText, int pixelsPerModule, Color darkColor, Color lightColor, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, Image icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true)
         {
             using (var qrGenerator = new QRCodeGenerator())
             using (var qrCodeData = qrGenerator.CreateQrCode(plainText, eccLevel, forceUtf8, utf8BOM, eciMode, requestedVersion))
@@ -142,5 +177,3 @@ namespace QRCoder
         }
     }
 }
-
-#endif

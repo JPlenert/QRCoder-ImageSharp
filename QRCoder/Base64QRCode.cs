@@ -1,16 +1,12 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using static QRCoder.Base64QRCode;
 using static QRCoder.QRCodeGenerator;
 
 namespace QRCoder
 {
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public class Base64QRCode : AbstractQRCode, IDisposable
     {
         private QRCode qr;
@@ -38,51 +34,49 @@ namespace QRCoder
 
         public string GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
-            return this.GetGraphic(pixelsPerModule, ColorTranslator.FromHtml(darkColorHtmlHex), ColorTranslator.FromHtml(lightColorHtmlHex), drawQuietZones, imgType);
+            return this.GetGraphic(pixelsPerModule, Color.Parse(darkColorHtmlHex), Color.Parse(lightColorHtmlHex), drawQuietZones, imgType);
         }
 
         public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             var base64 = string.Empty;
-            using (Bitmap bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones))
+            using (Image img = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones))
+            {
+                base64 = BitmapToBase64(img, imgType);
+            }
+            return base64;
+        }
+
+        public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Image icon, int iconSizePercent = 15, int iconBorderWidth = 6, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
+        {
+            var base64 = string.Empty;
+            using (Image bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones))
             {
                 base64 = BitmapToBase64(bmp, imgType);
             }
             return base64;
         }
 
-        public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Bitmap icon, int iconSizePercent = 15, int iconBorderWidth = 6, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
+
+        private string BitmapToBase64(Image img, ImageType imgType)
         {
             var base64 = string.Empty;
-            using (Bitmap bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones))
-            {
-                base64 = BitmapToBase64(bmp, imgType);
-            }
-            return base64;
-        }
-
-
-        private string BitmapToBase64(Bitmap bmp, ImageType imgType)
-        {
-            var base64 = string.Empty;
-            ImageFormat iFormat;
+            IImageEncoder iFormat;
             switch (imgType) {
+                default:
                 case ImageType.Png:
-                    iFormat = ImageFormat.Png;
+                    iFormat = new SixLabors.ImageSharp.Formats.Png.PngEncoder();
                     break;
                 case ImageType.Jpeg:
-                    iFormat = ImageFormat.Jpeg;
+                    iFormat = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder();
                     break;
                 case ImageType.Gif:
-                    iFormat = ImageFormat.Gif;
-                    break;
-                default:
-                    iFormat = ImageFormat.Png;
+                    iFormat = new SixLabors.ImageSharp.Formats.Gif.GifEncoder();
                     break;
             }
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                bmp.Save(memoryStream, iFormat);
+                img.Save(memoryStream, iFormat);
                 base64 = Convert.ToBase64String(memoryStream.ToArray(), Base64FormattingOptions.None);
             }
             return base64;
@@ -97,9 +91,6 @@ namespace QRCoder
 
     }
 
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class Base64QRCodeHelper
     {
         public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
@@ -111,5 +102,3 @@ namespace QRCoder
         }
     }
 }
-
-#endif

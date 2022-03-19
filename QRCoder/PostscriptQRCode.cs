@@ -1,14 +1,10 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.Drawing;
 using static QRCoder.QRCodeGenerator;
 
 namespace QRCoder
 {
-
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public class PostscriptQRCode : AbstractQRCode, IDisposable
     {
         /// <summary>
@@ -41,7 +37,7 @@ namespace QRCoder
 
         public string GetGraphic(Size viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, bool epsFormat = false)
         {
-            return this.GetGraphic(viewBox, ColorTranslator.FromHtml(darkColorHex), ColorTranslator.FromHtml(lightColorHex), drawQuietZones, epsFormat);
+            return this.GetGraphic(viewBox, Color.Parse(darkColorHex), Color.Parse(lightColorHex), drawQuietZones, epsFormat);
         }
 
         public string GetGraphic(Size viewBox, Color darkColor, Color lightColor, bool drawQuietZones = true, bool epsFormat = false)
@@ -55,8 +51,8 @@ namespace QRCoder
                 epsFormat ? "EPSF-3.0" : string.Empty
             });
             psFile += string.Format(psFunctions, new object[] {
-                CleanSvgVal(darkColor.R /255.0), CleanSvgVal(darkColor.G /255.0), CleanSvgVal(darkColor.B /255.0),
-                CleanSvgVal(lightColor.R /255.0), CleanSvgVal(lightColor.G /255.0), CleanSvgVal(lightColor.B /255.0),
+                CleanSvgVal(darkColor.ToPixel<Rgba32>().R /255.0), CleanSvgVal(darkColor.ToPixel<Rgba32>().G /255.0), CleanSvgVal(darkColor.ToPixel<Rgba32>().B /255.0),
+                CleanSvgVal(lightColor.ToPixel<Rgba32>().R /255.0), CleanSvgVal(lightColor.ToPixel<Rgba32>().G /255.0), CleanSvgVal(lightColor.ToPixel<Rgba32>().B /255.0),
                 drawableModulesCount
             });
 
@@ -143,9 +139,6 @@ showpage
 ";
     }
 
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class PostscriptQRCodeHelper
     {
         public static string GetQRCode(string plainText, int pointsPerModule, string darkColorHex, string lightColorHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, bool epsFormat = false)
@@ -157,5 +150,3 @@ showpage
         }
     }
 }
-
-#endif

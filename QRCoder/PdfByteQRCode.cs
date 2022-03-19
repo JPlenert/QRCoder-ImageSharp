@@ -1,7 +1,6 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0 || NET5_0 || NET6_0_WINDOWS
+﻿using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,9 +10,6 @@ using static QRCoder.QRCodeGenerator;
 namespace QRCoder
 {
 
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     // ReSharper disable once InconsistentNaming
     public class PdfByteQRCode : AbstractQRCode, IDisposable
     {
@@ -62,31 +58,19 @@ namespace QRCoder
         /// <returns></returns>
         public byte[] GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, int dpi = 150, long jpgQuality = 85)
         {
-            byte[] jpgArray = null, pngArray = null;
+            byte[] jpgArray = null;
             var imgSize = QrCodeData.ModuleMatrix.Count * pixelsPerModule;
             var pdfMediaSize = (imgSize * 72 / dpi).ToString(CultureInfo.InvariantCulture);
 
-            //Get QR code image
-            using (var qrCode = new PngByteQRCode(QrCodeData))
-            {
-                pngArray = qrCode.GetGraphic(pixelsPerModule, HexColorToByteArray(darkColorHtmlHex), HexColorToByteArray(lightColorHtmlHex));
-            }            
+            // Get QR code image
+            QRCode qr = new QRCode(QrCodeData);
+            Image img = qr.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex);
 
-            //Create image and transofrm to JPG
-            using (var msPng = new MemoryStream())
+            // Transform to JPG
+            using (var ms = new MemoryStream())
             {
-                msPng.Write(pngArray, 0, pngArray.Length);
-                var img = System.Drawing.Image.FromStream(msPng);
-                using (var msJpeg = new MemoryStream())
-                {
-                    // Create JPEG with specified quality
-                    var jpgImageCodecInfo = ImageCodecInfo.GetImageEncoders().First(x => x.MimeType == "image/jpeg");
-                    var jpgEncoderParameters = new EncoderParameters(1) { 
-                        Param = new EncoderParameter[]{ new EncoderParameter(Encoder.Quality, jpgQuality) }
-                    };
-                    img.Save(msJpeg, jpgImageCodecInfo, jpgEncoderParameters);
-                    jpgArray = msJpeg.ToArray();
-                }
+                img.SaveAsJpeg(ms);
+                jpgArray = ms.ToArray();
             }
             
             //Create PDF document
@@ -213,9 +197,6 @@ namespace QRCoder
         }
     }
 
-#if NET6_0_WINDOWS
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public static class PdfByteQRCodeHelper
     {
         public static byte[] GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex,
@@ -240,4 +221,3 @@ namespace QRCoder
         }
     }
 }
-#endif
