@@ -25,9 +25,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="shouldly" Version="4.2.1" />
-		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" />
 		<PackageReference Include="ZXing.Net" Version="0.16.9" />
-		<PackageReference Include="ZXing.Net.Bindings.ImageSharp.V2" Version="0.16.15" />
+		<PackageReference Include="ZXing.Net.Bindings.ImageSharp.V2" Version="0.16.13" />
 		<ProjectReference Include="..\QRCoder\QRCoder.csproj" />		
 	</ItemGroup>
 </Project>
