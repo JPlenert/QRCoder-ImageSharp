@@ -1,7 +1,8 @@
 name: release
 
 # Publishes to nuget.org via Trusted Publishing (OIDC, no stored API key).
-# Trigger: push a tag like v0.11.0 that matches <Version> in QRCoder/QRCoder.csproj.
+# Trigger: push a tag like v0.11.0 — the package version is taken from the tag
+# (the csproj has no <Version>; local builds default to 1.0.0).
 
 on:
   push:
@@ -20,18 +21,18 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Check tag matches csproj version
+      - name: Get version from tag
         run: |
-          CSPROJ_VERSION=$(grep -oPm1 '(?<=<Version>)[^<]+' QRCoder/QRCoder.csproj)
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
-          if [ "$CSPROJ_VERSION" != "$TAG_VERSION" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match csproj version $CSPROJ_VERSION"
+          VERSION="${GITHUB_REF_NAME#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME is not a valid version (expected e.g. v1.2.3 or v1.2.3-beta.1)"
             exit 1
           fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - run: dotnet test -f net10.0
 
-      - run: dotnet pack QRCoder/QRCoder.csproj -c Release -o artifacts
+      - run: dotnet pack QRCoder/QRCoder.csproj -c Release -o artifacts -p:Version=${{ env.VERSION }}
 
       - uses: actions/upload-artifact@v4
         with:
