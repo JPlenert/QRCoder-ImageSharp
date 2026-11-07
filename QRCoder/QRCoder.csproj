@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>QRCoder</PackageId>
+    <PackageId>QRCoder-Png</PackageId>
     <Version>0.11.0</Version>
     <Authors>Raffael Herrmann, Joerg Plenert</Authors>
     <PackageOwners>Joerg Plenert</PackageOwners>
