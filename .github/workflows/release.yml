@@ -32,7 +32,8 @@ jobs:
 
       - run: dotnet test -f net10.0
 
-      - run: dotnet pack QRCoder/QRCoder.csproj -c Release -o artifacts -p:Version=${{ env.VERSION }}
+      # GeneratePackageOnBuild (set in csproj) races with an explicit pack on multi-target builds -> NU5026
+      - run: dotnet pack QRCoder/QRCoder.csproj -c Release -o artifacts -p:Version=${{ env.VERSION }} -p:GeneratePackageOnBuild=false
 
       - uses: actions/upload-artifact@v4
         with:
