@@ -1188,7 +1188,7 @@ namespace QRCoder
 
             private string br = "\n";
             private readonly string iban, bic, name, purposeOfCreditTransfer, remittanceInformation, messageToGirocodeUser;
-            private readonly decimal amount;
+            private readonly decimal? amount;
             private readonly GirocodeVersion version;
             private readonly GirocodeEncoding encoding;
             private readonly TypeOfRemittance typeOfRemittance;
@@ -1202,7 +1202,7 @@ namespace QRCoder
             /// <param name="bic">BIC of the Beneficiary Bank.</param>
             /// <param name="name">Name of the Beneficiary.</param>
             /// <param name="amount">Amount of the Credit Transfer in Euro.
-            /// (Amount must be more than 0.01 and less than 999999999.99)</param>
+            /// (Amount must be between 0.01 and 999999999.99, inclusive.)</param>
             /// <param name="remittanceInformation">Remittance Information (Purpose-/reference text). (optional)</param>
             /// <param name="typeOfRemittance">Type of remittance information. Either structured (e.g. ISO 11649 RF Creditor Reference) and max. 35 chars or unstructured and max. 140 chars.</param>
             /// <param name="purposeOfCreditTransfer">Purpose of the Credit Transfer (optional)</param>
@@ -1210,6 +1210,26 @@ namespace QRCoder
             /// <param name="version">Girocode version. Either 001 or 002. Default: 001.</param>
             /// <param name="encoding">Encoding of the Girocode payload. Default: ISO-8859-1</param>
             public Girocode(string iban, string bic, string name, decimal amount, string remittanceInformation = "", TypeOfRemittance typeOfRemittance = TypeOfRemittance.Unstructured, string purposeOfCreditTransfer = "", string messageToGirocodeUser = "", GirocodeVersion version = GirocodeVersion.Version1, GirocodeEncoding encoding = GirocodeEncoding.ISO_8859_1)
+                : this(iban, bic, name, (decimal?)amount, remittanceInformation, typeOfRemittance, purposeOfCreditTransfer, messageToGirocodeUser, version, encoding)
+            {
+            }
+
+            /// <summary>
+            /// Generates the payload for a Girocode (QR-Code with credit transfer information).
+            /// Attention: When using Girocode payload, QR code must be generated with ECC level M!
+            /// </summary>
+            /// <param name="iban">Account number of the Beneficiary. Only IBAN is allowed.</param>
+            /// <param name="bic">BIC of the Beneficiary Bank.</param>
+            /// <param name="name">Name of the Beneficiary.</param>
+            /// <param name="amount">Amount of the Credit Transfer in Euro, between 0.01 and 999999999.99, inclusive.
+            /// Null or omitted means the payer enters the amount.</param>
+            /// <param name="remittanceInformation">Remittance Information (Purpose-/reference text). (optional)</param>
+            /// <param name="typeOfRemittance">Type of remittance information. Either structured (e.g. ISO 11649 RF Creditor Reference) and max. 35 chars or unstructured and max. 140 chars.</param>
+            /// <param name="purposeOfCreditTransfer">Purpose of the Credit Transfer (optional)</param>
+            /// <param name="messageToGirocodeUser">Beneficiary to originator information. (optional)</param>
+            /// <param name="version">Girocode version. Either 001 or 002. Default: 001.</param>
+            /// <param name="encoding">Encoding of the Girocode payload. Default: ISO-8859-1</param>
+            public Girocode(string iban, string bic, string name, decimal? amount = null, string remittanceInformation = "", TypeOfRemittance typeOfRemittance = TypeOfRemittance.Unstructured, string purposeOfCreditTransfer = "", string messageToGirocodeUser = "", GirocodeVersion version = GirocodeVersion.Version1, GirocodeEncoding encoding = GirocodeEncoding.ISO_8859_1)
             {
                 this.version = version;
                 this.encoding = encoding;
@@ -1222,10 +1242,13 @@ namespace QRCoder
                 if (name.Length > 70)
                     throw new GirocodeException("(Payee-)Name must be shorter than 71 chars.");
                 this.name = name;
-                if (amount.ToString().Replace(",", ".").Contains(".") && amount.ToString().Replace(",",".").Split('.')[1].TrimEnd('0').Length > 2)
-                    throw new GirocodeException("Amount must have less than 3 digits after decimal point.");
-                if (amount < 0.01m || amount > 999999999.99m)
-                    throw new GirocodeException("Amount has to at least 0.01 and must be smaller or equal to 999999999.99.");
+                if (amount.HasValue)
+                {
+                    if (amount.Value.ToString().Replace(",", ".").Contains(".") && amount.Value.ToString().Replace(",", ".").Split('.')[1].TrimEnd('0').Length > 2)
+                        throw new GirocodeException("Amount must have less than 3 digits after decimal point.");
+                    if (amount.Value < 0.01m || amount.Value > 999999999.99m)
+                        throw new GirocodeException("Amount has to at least 0.01 and must be smaller or equal to 999999999.99.");
+                }
                 this.amount = amount;
                 if (purposeOfCreditTransfer.Length > 4)
                     throw new GirocodeException("Purpose of credit transfer can only have 4 chars at maximum.");
@@ -1250,7 +1273,7 @@ namespace QRCoder
                 girocodePayload += bic + br;
                 girocodePayload += name + br;
                 girocodePayload += iban + br;
-                girocodePayload += $"EUR{amount:0.00}".Replace(",",".") + br;
+                girocodePayload += (amount.HasValue ? $"EUR{amount.Value:0.00}".Replace(",", ".") : string.Empty) + br;
                 girocodePayload += purposeOfCreditTransfer + br;
                 girocodePayload += ((typeOfRemittance == TypeOfRemittance.Structured)
                     ? remittanceInformation

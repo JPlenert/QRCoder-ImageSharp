@@ -952,6 +952,110 @@ namespace QRCoderTests
 
         [Fact]
         [Category("PayloadGenerator/Girocode")]
+        public void girocode_generator_should_leave_amount_line_blank_when_null_or_omitted()
+        {
+            var expected = "BCD\n001\n2\nSCT\nBFSWDE33BER\nBeneficiary\nDE33100205000001194700\n\n\n\n\n";
+
+            var explicitNull = new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary", null);
+            var omitted = new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary");
+
+            explicitNull
+                .ToString()
+                .ShouldBe(expected);
+            omitted
+                .ToString()
+                .ShouldBe(expected);
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        [Category("PayloadGenerator/Girocode")]
+        public void girocode_generator_should_preserve_version_and_remittance_positions_without_amount(bool version2, bool structured)
+        {
+            var version = version2
+                ? PayloadGenerator.Girocode.GirocodeVersion.Version2
+                : PayloadGenerator.Girocode.GirocodeVersion.Version1;
+            var remittanceType = structured
+                ? PayloadGenerator.Girocode.TypeOfRemittance.Structured
+                : PayloadGenerator.Girocode.TypeOfRemittance.Unstructured;
+            var expected = new[]
+            {
+                "BCD", version2 ? "002" : "001", "2", "SCT", "BFSWDE33BER",
+                "Beneficiary", "DE33100205000001194700", "", "CHAR",
+                structured ? "Reference" : "", structured ? "" : "Reference", "Message",
+            };
+
+            var explicitNull = new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary", null,
+                "Reference", remittanceType, "CHAR", "Message", version);
+            var omitted = new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary",
+                remittanceInformation: "Reference",
+                typeOfRemittance: remittanceType,
+                purposeOfCreditTransfer: "CHAR",
+                messageToGirocodeUser: "Message",
+                version: version);
+
+            explicitNull
+                .ToString()
+                .Split('\n')
+                .ShouldBe(expected);
+            omitted
+                .ToString()
+                .Split('\n')
+                .ShouldBe(expected);
+        }
+
+        [Theory]
+        [InlineData("0.01", "EUR0.01")]
+        [InlineData("999999999.99", "EUR999999999.99")]
+        [InlineData("12", "EUR12.00")]
+        [InlineData("12.3", "EUR12.30")]
+        [InlineData("12.34", "EUR12.34")]
+        [InlineData("12.3400", "EUR12.34")]
+        [Category("PayloadGenerator/Girocode")]
+        public void girocode_generator_should_preserve_decimal_and_nullable_amount_formatting(string amountText, string expectedAmount)
+        {
+            var amount = decimal.Parse(amountText, CultureInfo.InvariantCulture);
+
+            var original = new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary", amount);
+            var nullable = new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary", (decimal?)amount);
+
+            original
+                .ToString()
+                .Split('\n')[7]
+                .ShouldBe(expectedAmount);
+            nullable
+                .ToString()
+                .ShouldBe(original.ToString());
+        }
+
+        [Theory]
+        [InlineData("0", false)]
+        [InlineData("-0.01", false)]
+        [InlineData("1000000000.00", false)]
+        [InlineData("0.001", true)]
+        [InlineData("12.345", true)]
+        [Category("PayloadGenerator/Girocode")]
+        public void girocode_generator_should_throw_for_invalid_decimal_and_nullable_amounts(string amountText, bool invalidPrecision)
+        {
+            var amount = decimal.Parse(amountText, CultureInfo.InvariantCulture);
+            var expectedMessage = invalidPrecision
+                ? "Amount must have less than 3 digits after decimal point."
+                : "Amount has to at least 0.01 and must be smaller or equal to 999999999.99.";
+
+            var original = Record.Exception(() => new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary", amount));
+            var nullable = Record.Exception(() => new PayloadGenerator.Girocode("DE33100205000001194700", "BFSWDE33BER", "Beneficiary", (decimal?)amount));
+
+            Assert.IsType<PayloadGenerator.Girocode.GirocodeException>(original);
+            original.Message.ShouldBe(expectedMessage);
+            Assert.IsType<PayloadGenerator.Girocode.GirocodeException>(nullable);
+            nullable.Message.ShouldBe(expectedMessage);
+        }
+
+        [Fact]
+        [Category("PayloadGenerator/Girocode")]
         public void girocode_generator_can_generate_payload_full()
         {
             var iban = "DE33100205000001194700";
