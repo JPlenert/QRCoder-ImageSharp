@@ -12,25 +12,20 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public BitmapByteQRCode() { }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public BitmapByteQRCode(QRCodeData data) : base(data) { }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule)
         {
             return GetGraphic(pixelsPerModule, new byte[] { 0x00, 0x00, 0x00 }, new byte[] { 0xFF, 0xFF, 0xFF });
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex)
         {
             return GetGraphic(pixelsPerModule, HexColorToByteArray(darkColorHtmlHex), HexColorToByteArray(lightColorHtmlHex));
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule, byte[] darkColorRgb, byte[] lightColorRgb)
         {
             var sideLength = this.QrCodeData.ModuleMatrix.Count * pixelsPerModule;
@@ -106,7 +101,6 @@ namespace QRCoder
 
     public static class BitmapByteQRCodeHelper
     {
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex,
             string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false,
             EciMode eciMode = EciMode.Default, int requestedVersion = -1)
@@ -119,7 +113,6 @@ namespace QRCoder
                 return qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex);
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string txt, QRCodeGenerator.ECCLevel eccLevel, int size)
         {
             using (var qrGen = new QRCodeGenerator())

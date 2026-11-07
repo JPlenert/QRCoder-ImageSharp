@@ -4,8 +4,6 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-		<!-- Public API is deprecated; suppress internal usage warnings -->
-		<NoWarn>$(NoWarn);CS0618</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="assets\noun_Scientist_2909361.svg" />
