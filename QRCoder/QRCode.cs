@@ -11,20 +11,25 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public QRCode() { }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public QRCode(QRCodeData data) : base(data) { }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public Image GetGraphic(int pixelsPerModule)
         {
             return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public Image GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true)
         {
             return this.GetGraphic(pixelsPerModule, Color.Parse(darkColorHtmlHex), Color.Parse(lightColorHtmlHex), drawQuietZones);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public Image GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true)
         {
             int moduleOffset = drawQuietZones ? 0 : 4;
@@ -36,6 +41,7 @@ namespace QRCoder
             return image;
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public Image GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Image icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true, Color? iconBackgroundColor = null)
         {
             Image<Rgba32> img = GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones) as Image<Rgba32>;
@@ -168,6 +174,7 @@ namespace QRCoder
 
     public static class QRCodeHelper
     {
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static Image GetQRCode(string plainText, int pixelsPerModule, Color darkColor, Color lightColor, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, Image icon = null, int iconSizePercent = 15, int iconBorderWidth = 0, bool drawQuietZones = true)
         {
             using (var qrGenerator = new QRCodeGenerator())

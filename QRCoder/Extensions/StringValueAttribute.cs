@@ -25,6 +25,7 @@ namespace QRCoder.Extensions
         /// Init a StringValue Attribute
         /// </summary>
         /// <param name="value"></param>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public StringValueAttribute(string value)
         {
             this.StringValue = value;
@@ -38,6 +39,7 @@ namespace QRCoder.Extensions
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static string GetStringValue(this Enum value)
         {            
             var fieldInfo = value.GetType().GetField(value.ToString());

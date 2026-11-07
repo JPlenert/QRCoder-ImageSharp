@@ -10,8 +10,10 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PngByteQRCode() { }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PngByteQRCode(QRCodeData data) : base(data)
         {
         }
@@ -20,6 +22,7 @@ namespace QRCoder
         /// <summary>
         /// Creates a black & white PNG of the QR code, using 1-bit grayscale.
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule, bool drawQuietZones = true)
         {
             using (var png = new PngBuilder())
@@ -35,6 +38,7 @@ namespace QRCoder
         /// <summary>
         /// Creates 2-color PNG of the QR code, using 1-bit indexed color. Accepts 3-byte RGB colors for normal images and 4-byte RGBA-colors for transparent images.
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule, byte[] darkColorRgba, byte[] lightColorRgba, bool drawQuietZones = true)
         {
             using (var png = new PngBuilder())
@@ -320,6 +324,7 @@ namespace QRCoder
 
     public static class PngByteQRCodeHelper
     {
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string plainText, int pixelsPerModule, byte[] darkColorRgba, byte[] lightColorRgba, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true)
         {
             using (var qrGenerator = new QRCodeGenerator())
@@ -330,6 +335,7 @@ namespace QRCoder
     
 
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string txt, QRCodeGenerator.ECCLevel eccLevel, int size, bool drawQuietZones = true)
         {
             using (var qrGen = new QRCodeGenerator())

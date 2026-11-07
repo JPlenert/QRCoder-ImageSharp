@@ -14,10 +14,12 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public Base64QRCode() {
             qr = new QRCode();
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public Base64QRCode(QRCodeData data) : base(data) {
             qr = new QRCode(data);
         }
@@ -26,17 +28,20 @@ namespace QRCoder
             this.qr.SetQRCodeData(data);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pixelsPerModule)
         {
             return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
         }
 
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             return this.GetGraphic(pixelsPerModule, Color.Parse(darkColorHtmlHex), Color.Parse(lightColorHtmlHex), drawQuietZones, imgType);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             var base64 = string.Empty;
@@ -47,6 +52,7 @@ namespace QRCoder
             return base64;
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Image icon, int iconSizePercent = 15, int iconBorderWidth = 6, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             var base64 = string.Empty;
@@ -93,6 +99,7 @@ namespace QRCoder
 
     public static class Base64QRCodeHelper
     {
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
         {
             using (var qrGenerator = new QRCodeGenerator())
