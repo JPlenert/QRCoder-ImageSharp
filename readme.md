@@ -5,11 +5,14 @@
 QRCoder-ImageSharp is a simple library, written in C#.NET, which enables you to create QR codes. 
 It was forked from the [QRCoder](https://github.com/codebude/QRCoder) project that is using the System.Drawing assembly.
 
-Because of the System.Drawing assembly does not suport [non-Windows](https://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only) plattforms, QRCoder-ImageSharp is using the [ImageSharp](https://github.com/SixLabors/ImageSharp) assembly to support more plattforms.
+Because of the System.Drawing assembly does not suport [non-Windows](https://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only) plattforms, QRCoder-ImageSharp originally used the [ImageSharp](https://github.com/SixLabors/ImageSharp) assembly. Today it has no imaging dependency at all: PNG files are written (and logos read) by a small built-in PNG encoder/decoder.
 
 ## Differences between QRCoder and QRCoder-ImageSharp
 
-- QRCoder-ImageSharp is using ImageSharp instead of System.Drawing
+- QRCoder-ImageSharp does not depend on System.Drawing or any other imaging library
+- Raster renderers (`QRCode`, `Base64QRCode`) return PNG data (`byte[]` / Base64 string), logos are passed as PNG file content (`byte[]`)
+- Colors are given as `QRColor` (e.g. `QRColor.Black`, `QRColor.Parse("#ff0000")`), sizes as `QRSize`
+- Only PNG is supported as raster format, the PDF renderer embeds a lossless image
 - QRCoder-ImageSharp is not supporting ArtQRCode
 - QRCoder-ImageSharp does not make rounded ractangles when including logos into QRCode
 - QRCoder-ImageSharp does not support russian QRCode payloads (we stand with ukraine!)

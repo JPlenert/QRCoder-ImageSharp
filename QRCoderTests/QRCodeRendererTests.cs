@@ -3,8 +3,6 @@ using QRCoder;
 using Shouldly;
 using QRCoderTests.Helpers.XUnitExtenstions;
 using QRCoderTests.Helpers;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace QRCoderTests
 {
@@ -17,80 +15,80 @@ namespace QRCoderTests
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_standard_graphic()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_standard_graphic), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "c0f8af4256eddc7e566983e539cce389");
+            HelperFunctions.TestByHash(image, "aabd78913d146331c4a74921af587d2a");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_standard_graphic_hex()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, "#000000", "#ffffff") as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, "#000000", "#ffffff"));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_standard_graphic_hex), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "c0f8af4256eddc7e566983e539cce389");
+            HelperFunctions.TestByHash(image, "aabd78913d146331c4a74921af587d2a");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_standard_graphic_without_quietzones()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(5, Color.Black, Color.White, false) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(5, QRColor.Black, QRColor.White, false));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_standard_graphic_without_quietzones), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "8a2d62fa98c09d764a21466b8d6bb6c8");
+            HelperFunctions.TestByHash(image, "60b07f40d4419608e7304075d579fa96");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_with_transparent_logo_graphic()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, Color.Black, Color.Transparent, icon: HelperFunctions.LoadAssetImage()) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, QRColor.Black, QRColor.Transparent, icon: HelperFunctions.LoadAssetImage()));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_with_transparent_logo_graphic), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "d19c708b8e2b28c62a6b9db3e630179a");
+            HelperFunctions.TestByHash(image, "7bb219d764f01359f0cad2613afef8d3");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_with_non_transparent_logo_graphic()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, Color.Black, Color.White, icon: HelperFunctions.LoadAssetImage()) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, QRColor.Black, QRColor.White, icon: HelperFunctions.LoadAssetImage()));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_with_non_transparent_logo_graphic), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "5e535aac60c1bc7ee8ec506916cd2dd8");
+            HelperFunctions.TestByHash(image, "aba29cbbcc93312087b4cc1fa9587ecc");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_with_logo_and_with_transparent_border()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, Color.Black, Color.Transparent, iconBorderWidth: 6, icon: HelperFunctions.LoadAssetImage()) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, QRColor.Black, QRColor.Transparent, iconBorderWidth: 6, icon: HelperFunctions.LoadAssetImage()));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_with_logo_and_with_transparent_border), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "d19c708b8e2b28c62a6b9db3e630179a");
+            HelperFunctions.TestByHash(image, "7bb219d764f01359f0cad2613afef8d3");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_with_logo_and_with_standard_border()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, Color.Black, Color.White, iconBorderWidth: 6, icon: HelperFunctions.LoadAssetImage()) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, QRColor.Black, QRColor.White, iconBorderWidth: 6, icon: HelperFunctions.LoadAssetImage()));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_with_logo_and_with_standard_border), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "91f35d10164ccd4a9ad621e2dc81c86b");
+            HelperFunctions.TestByHash(image, "eee1cc2cc70aadec6597d78154f24a4b");
         }
 
         [Fact]
         [Category("QRRenderer/QRCode")]
         public void can_create_qrcode_with_logo_and_with_custom_border()
         {
-            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, Color.Black, Color.Transparent, iconBorderWidth: 6, iconBackgroundColor: Color.DarkGreen, icon: HelperFunctions.LoadAssetImage()) as Image<Rgba32>);
+            var image = HelperFunctions.GenerateImage(QRCodeContent, (qr) => qr.GetGraphic(10, QRColor.Black, QRColor.Transparent, iconBorderWidth: 6, iconBackgroundColor: QRColor.DarkGreen, icon: HelperFunctions.LoadAssetImage()));
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_create_qrcode_with_logo_and_with_custom_border), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "ce13cc3372aa477a914c9828cdad4754");
+            HelperFunctions.TestByHash(image, "df3ab1809a0a7ffb520881d233c7f434");
         }
 
 
@@ -107,10 +105,10 @@ namespace QRCoderTests
         [Category("QRRenderer/QRCode")]
         public void can_render_qrcode_from_helper()
         {
-            var image = QRCodeHelper.GetQRCode(QRCodeContent, 10, Color.Black, Color.White, QRCodeGenerator.ECCLevel.H) as Image<Rgba32>;
+            var image = QRCodeHelper.GetQRCode(QRCodeContent, 10, QRColor.Black, QRColor.White, QRCodeGenerator.ECCLevel.H);
             HelperFunctions.TestImageToFile(VisualTestPath, nameof(can_render_qrcode_from_helper), image);
             HelperFunctions.TestByDecode(image, QRCodeContent);
-            HelperFunctions.TestByHash(image, "c0f8af4256eddc7e566983e539cce389");
+            HelperFunctions.TestByHash(image, "aabd78913d146331c4a74921af587d2a");
         }
     }
 }

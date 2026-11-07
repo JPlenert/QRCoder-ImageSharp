@@ -1,6 +1,4 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using System;
+﻿using System;
 using static QRCoder.QRCodeGenerator;
 
 namespace QRCoder
@@ -15,32 +13,32 @@ namespace QRCoder
 
         public string GetGraphic(int pointsPerModule, bool epsFormat = false)
         {
-            var viewBox = new Size(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
-            return this.GetGraphic(viewBox, Color.Black, Color.White, true, epsFormat);
+            var viewBox = new QRSize(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
+            return this.GetGraphic(viewBox, QRColor.Black, QRColor.White, true, epsFormat);
         }
-        public string GetGraphic(int pointsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, bool epsFormat = false)
+        public string GetGraphic(int pointsPerModule, QRColor darkColor, QRColor lightColor, bool drawQuietZones = true, bool epsFormat = false)
         {
-            var viewBox = new Size(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
+            var viewBox = new QRSize(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
             return this.GetGraphic(viewBox, darkColor, lightColor, drawQuietZones, epsFormat);
         }
 
         public string GetGraphic(int pointsPerModule, string darkColorHex, string lightColorHex, bool drawQuietZones = true, bool epsFormat = false)
         {
-            var viewBox = new Size(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
+            var viewBox = new QRSize(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
             return this.GetGraphic(viewBox, darkColorHex, lightColorHex, drawQuietZones, epsFormat);
         }
 
-        public string GetGraphic(Size viewBox, bool drawQuietZones = true, bool epsFormat = false)
+        public string GetGraphic(QRSize viewBox, bool drawQuietZones = true, bool epsFormat = false)
         {
-            return this.GetGraphic(viewBox, Color.Black, Color.White, drawQuietZones, epsFormat);
+            return this.GetGraphic(viewBox, QRColor.Black, QRColor.White, drawQuietZones, epsFormat);
         }
 
-        public string GetGraphic(Size viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, bool epsFormat = false)
+        public string GetGraphic(QRSize viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, bool epsFormat = false)
         {
-            return this.GetGraphic(viewBox, Color.Parse(darkColorHex), Color.Parse(lightColorHex), drawQuietZones, epsFormat);
+            return this.GetGraphic(viewBox, QRColor.Parse(darkColorHex), QRColor.Parse(lightColorHex), drawQuietZones, epsFormat);
         }
 
-        public string GetGraphic(Size viewBox, Color darkColor, Color lightColor, bool drawQuietZones = true, bool epsFormat = false)
+        public string GetGraphic(QRSize viewBox, QRColor darkColor, QRColor lightColor, bool drawQuietZones = true, bool epsFormat = false)
         {
             var offset = drawQuietZones ? 0 : 4;
             var drawableModulesCount = this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : offset * 2);
@@ -51,8 +49,8 @@ namespace QRCoder
                 epsFormat ? "EPSF-3.0" : string.Empty
             });
             psFile += string.Format(psFunctions, new object[] {
-                CleanSvgVal(darkColor.ToPixel<Rgba32>().R /255.0), CleanSvgVal(darkColor.ToPixel<Rgba32>().G /255.0), CleanSvgVal(darkColor.ToPixel<Rgba32>().B /255.0),
-                CleanSvgVal(lightColor.ToPixel<Rgba32>().R /255.0), CleanSvgVal(lightColor.ToPixel<Rgba32>().G /255.0), CleanSvgVal(lightColor.ToPixel<Rgba32>().B /255.0),
+                CleanSvgVal(darkColor.R /255.0), CleanSvgVal(darkColor.G /255.0), CleanSvgVal(darkColor.B /255.0),
+                CleanSvgVal(lightColor.R /255.0), CleanSvgVal(lightColor.G /255.0), CleanSvgVal(lightColor.B /255.0),
                 drawableModulesCount
             });
 

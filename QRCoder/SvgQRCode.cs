@@ -1,5 +1,4 @@
 using QRCoder.Extensions;
-using SixLabors.ImageSharp;
 using System;
 using System.Collections;
 using System.Text;
@@ -23,8 +22,8 @@ namespace QRCoder
         /// <returns>SVG as string</returns>
         public string GetGraphic(int pixelsPerModule)
         {
-            var viewBox = new Size(pixelsPerModule*QrCodeData.ModuleMatrix.Count, pixelsPerModule * QrCodeData.ModuleMatrix.Count);
-            return this.GetGraphic(viewBox, Color.Black, Color.White);
+            var viewBox = new QRSize(pixelsPerModule*QrCodeData.ModuleMatrix.Count, pixelsPerModule * QrCodeData.ModuleMatrix.Count);
+            return this.GetGraphic(viewBox, QRColor.Black, QRColor.White);
         }
 
         /// <summary>
@@ -37,11 +36,11 @@ namespace QRCoder
         /// <param name="sizingMode">Defines if width/height or viewbox should be used for size definition</param>
         /// <param name="logo">A (optional) logo to be rendered on the code (either Bitmap or SVG)</param>
         /// <returns>SVG as string</returns>
-        public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
+        public string GetGraphic(int pixelsPerModule, QRColor darkColor, QRColor lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
         {
             var offset = drawQuietZones ? 0 : 4;
             var edgeSize = this.QrCodeData.ModuleMatrix.Count * pixelsPerModule - (offset * 2 * pixelsPerModule);
-            var viewBox = new Size(edgeSize, edgeSize);
+            var viewBox = new QRSize(edgeSize, edgeSize);
             return this.GetGraphic(viewBox, darkColor, lightColor, drawQuietZones, sizingMode, logo);
         }
 
@@ -59,7 +58,7 @@ namespace QRCoder
         {
             var offset = drawQuietZones ? 0 : 4;
             var edgeSize = this.QrCodeData.ModuleMatrix.Count * pixelsPerModule - (offset * 2 * pixelsPerModule);
-            var viewBox = new Size(edgeSize, edgeSize);
+            var viewBox = new QRSize(edgeSize, edgeSize);
             return this.GetGraphic(viewBox, darkColorHex, lightColorHex, drawQuietZones, sizingMode, logo);
         }
 
@@ -71,9 +70,9 @@ namespace QRCoder
         /// <param name="sizingMode">Defines if width/height or viewbox should be used for size definition</param>
         /// <param name="logo">A (optional) logo to be rendered on the code (either Bitmap or SVG)</param>
         /// <returns>SVG as string</returns>
-        public string GetGraphic(Size viewBox, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
+        public string GetGraphic(QRSize viewBox, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
         {
-            return this.GetGraphic(viewBox, Color.Black, Color.White, drawQuietZones, sizingMode, logo);
+            return this.GetGraphic(viewBox, QRColor.Black, QRColor.White, drawQuietZones, sizingMode, logo);
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace QRCoder
         /// <param name="sizingMode">Defines if width/height or viewbox should be used for size definition</param>
         /// <param name="logo">A (optional) logo to be rendered on the code (either Bitmap or SVG)</param>
         /// <returns>SVG as string</returns>
-        public string GetGraphic(Size viewBox, Color darkColor, Color lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
+        public string GetGraphic(QRSize viewBox, QRColor darkColor, QRColor lightColor, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
         {            
             return this.GetGraphic(viewBox, $"#{darkColor.ToHex()}", $"#{lightColor.ToHex()}", drawQuietZones, sizingMode, logo);
         }
@@ -101,7 +100,7 @@ namespace QRCoder
         /// <param name="sizingMode">Defines if width/height or viewbox should be used for size definition</param>
         /// <param name="logo">A (optional) logo to be rendered on the code (either Bitmap or SVG)</param>
         /// <returns>SVG as string</returns>
-        public string GetGraphic(Size viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
+        public string GetGraphic(QRSize viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, SizingMode sizingMode = SizingMode.WidthHeightAttribute, SvgLogo logo = null)
         {
             int offset = drawQuietZones ? 0 : 4;
             int drawableModulesCount = this.QrCodeData.ModuleMatrix.Count - (drawQuietZones ? 0 : offset * 2);
@@ -212,7 +211,7 @@ namespace QRCoder
             return x + pixelPerModule >= attr.Value.X && x <= attr.Value.X + attr.Value.Width && y + pixelPerModule >= attr.Value.Y && y <= attr.Value.Y + attr.Value.Height;
         }
 
-        private ImageAttributes GetLogoAttributes(SvgLogo logo, Size viewBox)
+        private ImageAttributes GetLogoAttributes(SvgLogo logo, QRSize viewBox)
         {
             var imgWidth = logo.GetIconSizePercent() / 100d * viewBox.Width;
             var imgHeight = logo.GetIconSizePercent() / 100d * viewBox.Height;
@@ -268,17 +267,15 @@ namespace QRCoder
             /// <summary>
             /// Create a logo object to be used in SvgQRCode renderer
             /// </summary>
-            /// <param name="iconRasterized">Logo to be rendered as Bitmap/rasterized graphic</param>
+            /// <param name="iconRasterized">Logo to be rendered as rasterized graphic (PNG file content)</param>
             /// <param name="iconSizePercent">Degree of percentage coverage of the QR code by the logo</param>
             /// <param name="fillLogoBackground">If true, the background behind the logo will be cleaned</param>
-            public SvgLogo(Image iconRasterized, int iconSizePercent = 15, bool fillLogoBackground = true)
+            public SvgLogo(byte[] iconRasterized, int iconSizePercent = 15, bool fillLogoBackground = true)
             {
+                if (iconRasterized == null)
+                    throw new ArgumentNullException(nameof(iconRasterized));
                 _iconSizePercent = iconSizePercent;
-                using (var ms = new System.IO.MemoryStream())
-                {
-                    iconRasterized.SaveAsPng(ms);
-                    _logoData = Convert.ToBase64String(ms.GetBuffer(), Base64FormattingOptions.None);
-                }
+                _logoData = Convert.ToBase64String(iconRasterized, Base64FormattingOptions.None);
                 _mediaType = MediaType.PNG;
                 _fillLogoBackground = fillLogoBackground;
                 _logoRaw = iconRasterized;

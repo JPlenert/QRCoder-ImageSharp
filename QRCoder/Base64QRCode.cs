@@ -1,8 +1,4 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
-using System;
-using System.IO;
-using static QRCoder.Base64QRCode;
+﻿using System;
 using static QRCoder.QRCodeGenerator;
 
 namespace QRCoder
@@ -28,77 +24,39 @@ namespace QRCoder
 
         public string GetGraphic(int pixelsPerModule)
         {
-            return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
+            return this.GetGraphic(pixelsPerModule, QRColor.Black, QRColor.White, true);
         }
 
-
-        public string GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
+        public string GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true)
         {
-            return this.GetGraphic(pixelsPerModule, Color.Parse(darkColorHtmlHex), Color.Parse(lightColorHtmlHex), drawQuietZones, imgType);
+            return this.GetGraphic(pixelsPerModule, QRColor.Parse(darkColorHtmlHex), QRColor.Parse(lightColorHtmlHex), drawQuietZones);
         }
 
-        public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
+        /// <summary>
+        /// Returns the QR code as Base64 encoded PNG.
+        /// </summary>
+        public string GetGraphic(int pixelsPerModule, QRColor darkColor, QRColor lightColor, bool drawQuietZones = true)
         {
-            var base64 = string.Empty;
-            using (Image img = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones))
-            {
-                base64 = BitmapToBase64(img, imgType);
-            }
-            return base64;
+            return Convert.ToBase64String(qr.GetGraphic(pixelsPerModule, darkColor, lightColor, drawQuietZones), Base64FormattingOptions.None);
         }
 
-        public string GetGraphic(int pixelsPerModule, Color darkColor, Color lightColor, Image icon, int iconSizePercent = 15, int iconBorderWidth = 6, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
+        /// <summary>
+        /// Returns the QR code with an icon (PNG file content) as Base64 encoded PNG.
+        /// </summary>
+        public string GetGraphic(int pixelsPerModule, QRColor darkColor, QRColor lightColor, byte[] icon, int iconSizePercent = 15, int iconBorderWidth = 6, bool drawQuietZones = true)
         {
-            var base64 = string.Empty;
-            using (Image bmp = qr.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones))
-            {
-                base64 = BitmapToBase64(bmp, imgType);
-            }
-            return base64;
+            return Convert.ToBase64String(qr.GetGraphic(pixelsPerModule, darkColor, lightColor, icon, iconSizePercent, iconBorderWidth, drawQuietZones), Base64FormattingOptions.None);
         }
-
-
-        private string BitmapToBase64(Image img, ImageType imgType)
-        {
-            var base64 = string.Empty;
-            IImageEncoder iFormat;
-            switch (imgType) {
-                default:
-                case ImageType.Png:
-                    iFormat = new SixLabors.ImageSharp.Formats.Png.PngEncoder();
-                    break;
-                case ImageType.Jpeg:
-                    iFormat = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder();
-                    break;
-                case ImageType.Gif:
-                    iFormat = new SixLabors.ImageSharp.Formats.Gif.GifEncoder();
-                    break;
-            }
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                img.Save(memoryStream, iFormat);
-                base64 = Convert.ToBase64String(memoryStream.ToArray(), Base64FormattingOptions.None);
-            }
-            return base64;
-        }
-
-        public enum ImageType
-        {
-            Gif,
-            Jpeg,
-            Png
-        }
-
     }
 
     public static class Base64QRCodeHelper
     {
-        public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, ImageType imgType = ImageType.Png)
+        public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true)
         {
             using (var qrGenerator = new QRCodeGenerator())
             using (var qrCodeData = qrGenerator.CreateQrCode(plainText, eccLevel, forceUtf8, utf8BOM, eciMode, requestedVersion))
             using (var qrCode = new Base64QRCode(qrCodeData))
-                return qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex, drawQuietZones, imgType);
+                return qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex, drawQuietZones);
         }
     }
 }
