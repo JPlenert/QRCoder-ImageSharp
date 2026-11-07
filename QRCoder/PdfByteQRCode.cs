@@ -18,8 +18,10 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PdfByteQRCode() { }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PdfByteQRCode(QRCodeData data) : base(data) { }
 
         /// <summary>
@@ -27,6 +29,7 @@ namespace QRCoder
         /// </summary>
         /// <param name="pixelsPerModule"></param>
         /// <returns></returns>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule)
         {
             return GetGraphic(pixelsPerModule, "#000000", "#ffffff");
@@ -56,6 +59,7 @@ namespace QRCoder
         /// <param name="dpi"></param>
         /// <param name="jpgQuality"></param>
         /// <returns></returns>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, int dpi = 150, long jpgQuality = 85)
         {
             byte[] jpgArray = null;
@@ -199,6 +203,7 @@ namespace QRCoder
 
     public static class PdfByteQRCodeHelper
     {
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex,
             string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false,
             EciMode eciMode = EciMode.Default, int requestedVersion = -1)
@@ -211,6 +216,7 @@ namespace QRCoder
                 return qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string txt, ECCLevel eccLevel, int size)
         {
             using (var qrGen = new QRCodeGenerator())

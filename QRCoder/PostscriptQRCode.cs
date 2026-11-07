@@ -10,36 +10,44 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PostscriptQRCode() { }
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PostscriptQRCode(QRCodeData data) : base(data) { }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pointsPerModule, bool epsFormat = false)
         {
             var viewBox = new Size(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
             return this.GetGraphic(viewBox, Color.Black, Color.White, true, epsFormat);
         }
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pointsPerModule, Color darkColor, Color lightColor, bool drawQuietZones = true, bool epsFormat = false)
         {
             var viewBox = new Size(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
             return this.GetGraphic(viewBox, darkColor, lightColor, drawQuietZones, epsFormat);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int pointsPerModule, string darkColorHex, string lightColorHex, bool drawQuietZones = true, bool epsFormat = false)
         {
             var viewBox = new Size(pointsPerModule * this.QrCodeData.ModuleMatrix.Count, pointsPerModule * this.QrCodeData.ModuleMatrix.Count);
             return this.GetGraphic(viewBox, darkColorHex, lightColorHex, drawQuietZones, epsFormat);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(Size viewBox, bool drawQuietZones = true, bool epsFormat = false)
         {
             return this.GetGraphic(viewBox, Color.Black, Color.White, drawQuietZones, epsFormat);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(Size viewBox, string darkColorHex, string lightColorHex, bool drawQuietZones = true, bool epsFormat = false)
         {
             return this.GetGraphic(viewBox, Color.Parse(darkColorHex), Color.Parse(lightColorHex), drawQuietZones, epsFormat);
         }
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(Size viewBox, Color darkColor, Color lightColor, bool drawQuietZones = true, bool epsFormat = false)
         {
             var offset = drawQuietZones ? 0 : 4;
@@ -141,6 +149,7 @@ showpage
 
     public static class PostscriptQRCodeHelper
     {
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static string GetQRCode(string plainText, int pointsPerModule, string darkColorHex, string lightColorHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, bool drawQuietZones = true, bool epsFormat = false)
         {
             using (var qrGenerator = new QRCodeGenerator())

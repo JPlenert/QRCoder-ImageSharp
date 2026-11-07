@@ -1,23 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net10.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <!-- Public API is deprecated; suppress internal usage warnings -->
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>QRCoder-ImageSharp</PackageId>
-    <Version>0.10.0</Version>
+    <Version>0.10.1</Version>
     <Authors>Raffael Herrmann, Joerg Plenert</Authors>
     <PackageOwners>Joerg Plenert</PackageOwners>
     <AssemblyName>QRCoder</AssemblyName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/JPlenert/QRCoder-ImageSharp</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/JPlenert/QRCoder-Png</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <PackageTags>c# csharp qr qrcoder qrcode qr-generator qr-code-generator</PackageTags>
-    <RepositoryUrl>https://github.com/JPlenert/QRCoder-ImageSharp.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/JPlenert/QRCoder-Png.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes. Based on ImageSharp to provide plattform independency.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

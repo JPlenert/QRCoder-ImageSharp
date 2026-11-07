@@ -30,6 +30,7 @@ namespace QRCoder
             /// <param name="authenticationMode">Authentification mode (WEP, WPA, WPA2)</param>
             /// <param name="isHiddenSSID">Set flag, if the WiFi network hides its SSID</param>
             /// <param name="escapeHexStrings">Set flag, if ssid/password is delivered as HEX string. Note: May not be supported on iOS devices.</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public WiFi(string ssid, string password, Authentication authenticationMode, bool isHiddenSSID = false,  bool escapeHexStrings = true)
             {
                 this.ssid = EscapeInput(ssid);
@@ -67,6 +68,7 @@ namespace QRCoder
             /// <param name="subject">Subject line of the email</param>
             /// <param name="message">Message content of the email</param>
             /// <param name="encoding">Payload encoding type. Choose dependent on your QR Code scanner app.</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public Mail(string mailReceiver = null, string subject = null, string message = null, MailEncoding encoding = MailEncoding.MAILTO)
             {
                 this.mailReceiver = mailReceiver;
@@ -117,6 +119,7 @@ namespace QRCoder
             /// </summary>
             /// <param name="number">Receiver phone number</param>
             /// <param name="encoding">Encoding type</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public SMS(string number, SMSEncoding encoding = SMSEncoding.SMS)
             {
                 this.number = number;
@@ -130,6 +133,7 @@ namespace QRCoder
             /// <param name="number">Receiver phone number</param>
             /// <param name="subject">Text of the SMS</param>
             /// <param name="encoding">Encoding type</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public SMS(string number, string subject, SMSEncoding encoding = SMSEncoding.SMS)
             {
                 this.number = number;
@@ -179,6 +183,7 @@ namespace QRCoder
             /// </summary>
             /// <param name="number">Receiver phone number</param>
             /// <param name="encoding">Encoding type</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public MMS(string number, MMSEncoding encoding = MMSEncoding.MMS)
             {
                 this.number = number;
@@ -192,6 +197,7 @@ namespace QRCoder
             /// <param name="number">Receiver phone number</param>
             /// <param name="subject">Text of the MMS</param>
             /// <param name="encoding">Encoding type</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public MMS(string number, string subject, MMSEncoding encoding = MMSEncoding.MMS)
             {
                 this.number = number;
@@ -238,6 +244,7 @@ namespace QRCoder
             /// <param name="latitude">Latitude with . as splitter</param>
             /// <param name="longitude">Longitude with . as splitter</param>
             /// <param name="encoding">Encoding type - GEO or GoogleMaps</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public Geolocation(string latitude, string longitude, GeolocationEncoding encoding = GeolocationEncoding.GEO)
             {
                 this.latitude = latitude.Replace(",",".");
@@ -273,6 +280,7 @@ namespace QRCoder
             /// Generates a phone call payload
             /// </summary>
             /// <param name="number">Phonenumber of the receiver</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public PhoneNumber(string number)
             {
                 this.number = number;
@@ -292,6 +300,7 @@ namespace QRCoder
             /// Generates a Skype call payload
             /// </summary>
             /// <param name="skypeUsername">Skype username which will be called</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public SkypeCall(string skypeUsername)
             {
                 this.skypeUsername = skypeUsername;
@@ -311,6 +320,7 @@ namespace QRCoder
             /// Generates a link. If not given, http/https protocol will be added.
             /// </summary>
             /// <param name="url">Link url target</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public Url(string url)
             {
                 this.url = url;
@@ -335,6 +345,7 @@ namespace QRCoder
             /// Use: 1XXXXXXXXXX | Don't use: +001-(XXX)XXXXXXX
             /// </param>
             /// <param name="message">The message</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public WhatsAppMessage(string number, string message)
             {
                 this.number = number;
@@ -345,6 +356,7 @@ namespace QRCoder
             /// Let's you compose a WhatApp message. When scanned the user is asked to choose a contact who will receive the message.
             /// </summary>
             /// <param name="message">The message</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public WhatsAppMessage(string message)
             {
                 this.number = string.Empty;
@@ -368,6 +380,7 @@ namespace QRCoder
             /// </summary>
             /// <param name="url">Url of the bookmark</param>
             /// <param name="title">Title of the bookmark</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public Bookmark(string url, string title)
             {
                 this.url = EscapeInput(url);
@@ -427,6 +440,7 @@ namespace QRCoder
             /// <param name="note">Memo text / notes</param>            
             /// <param name="org">Organisation/Company</param>            
             /// <param name="orgTitle">Organisation/Company Title</param>            
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public ContactData(ContactOutputType outputType, string firstname, string lastname, string nickname = null, string phone = null, string mobilePhone = null, string workPhone = null, string email = null, DateTime? birthday = null, string website = null, string street = null, string houseNumber = null, string city = null, string zipCode = null, string country = null, string note = null, string stateRegion = null, AddressOrder addressOrder = AddressOrder.Default, string org = null, string orgTitle = null)
             {             
                 this.firstname = firstname;
@@ -624,6 +638,7 @@ namespace QRCoder
             /// <param name="amount">Amount of coins to transfer</param>
             /// <param name="label">Reference label</param>
             /// <param name="message">Referece text aka message</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BitcoinLikeCryptoCurrencyAddress(BitcoinLikeCryptoCurrencyType currencyType, string address, double? amount, string label = null, string message = null)
             {
                 this.currencyType = currencyType;
@@ -673,18 +688,21 @@ namespace QRCoder
 
         public class BitcoinAddress : BitcoinLikeCryptoCurrencyAddress
         {
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BitcoinAddress(string address, double? amount, string label = null, string message = null)
                 : base(BitcoinLikeCryptoCurrencyType.Bitcoin, address, amount, label, message) { }
         }
 
         public class BitcoinCashAddress : BitcoinLikeCryptoCurrencyAddress
         {
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BitcoinCashAddress(string address, double? amount, string label = null, string message = null)
                 : base(BitcoinLikeCryptoCurrencyType.BitcoinCash, address, amount, label, message) { }
         }
 
         public class LitecoinAddress : BitcoinLikeCryptoCurrencyAddress
         {
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public LitecoinAddress(string address, double? amount, string label = null, string message = null)
                 : base(BitcoinLikeCryptoCurrencyType.Litecoin, address, amount, label, message) { }
         }
@@ -720,6 +738,7 @@ namespace QRCoder
             /// <param name="ultimateCreditor">Ultimate creditor information (use only in consultation with your bank - for future use only!)</param>
             /// <param name="alternativeProcedure1">Optional command for alternative processing mode - line 1</param>
             /// <param name="alternativeProcedure2">Optional command for alternative processing mode - line 2</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public SwissQrCode(Iban iban, Currency currency, Contact creditor, Reference reference, AdditionalInformation additionalInformation = null, Contact debitor = null, decimal? amount = null, DateTime? requestedDateOfPayment = null, Contact ultimateCreditor = null, string alternativeProcedure1 = null, string alternativeProcedure2 = null)
             {
                 this.iban = iban;
@@ -760,6 +779,7 @@ namespace QRCoder
                /// </summary>
                /// <param name="unstructuredMessage">Unstructured text message</param>
                /// <param name="billInformation">Bill information</param>
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public AdditionalInformation(string unstructuredMessage = null, string billInformation = null)
                 {
                     if (((unstructuredMessage != null ? unstructuredMessage.Length : 0) + (billInformation != null ? billInformation.Length : 0)) > 140)
@@ -787,15 +807,18 @@ namespace QRCoder
 
                 public class SwissQrCodeAdditionalInformationException : Exception
                 {
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeAdditionalInformationException()
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeAdditionalInformationException(string message)
                         : base(message)
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeAdditionalInformationException(string message, Exception inner)
                         : base(message, inner)
                     {
@@ -815,6 +838,7 @@ namespace QRCoder
                 /// <param name="referenceType">Type of the reference (QRR, SCOR or NON)</param>
                 /// <param name="reference">Reference text</param>
                 /// <param name="referenceTextType">Type of the reference text (QR-reference or Creditor Reference)</param>                
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public Reference(ReferenceType referenceType, string reference = null, ReferenceTextType? referenceTextType = null)
                 {
                     this.referenceType = referenceType;
@@ -863,15 +887,18 @@ namespace QRCoder
 
                 public class SwissQrCodeReferenceException : Exception
                 {
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeReferenceException()
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeReferenceException(string message)
                         : base(message)
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeReferenceException(string message, Exception inner)
                         : base(message, inner)
                     {
@@ -889,6 +916,7 @@ namespace QRCoder
                 /// </summary>
                 /// <param name="iban">IBAN</param>
                 /// <param name="ibanType">Type of IBAN (normal or QR-IBAN)</param>
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public Iban(string iban, IbanType ibanType)
                 {
                     if (ibanType == IbanType.Iban && !IsValidIban(iban))
@@ -919,15 +947,18 @@ namespace QRCoder
 
                 public class SwissQrCodeIbanException : Exception
                 {
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeIbanException()
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeIbanException(string message)
                         : base(message)
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeIbanException(string message, Exception inner)
                         : base(message, inner)
                     {
@@ -969,11 +1000,13 @@ namespace QRCoder
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public static Contact WithStructuredAddress(string name, string zipCode, string city, string country, string street = null, string houseNumber = null)
                 {
                     return new Contact(name, zipCode, city, country, street, houseNumber, AddressType.StructuredAddress);
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public static Contact WithCombinedAddress(string name, string country, string addressLine1, string addressLine2)
                 {
                     return new Contact(name, null, null, country, addressLine1, addressLine2, AddressType.CombinedAddress);
@@ -1080,15 +1113,18 @@ namespace QRCoder
 
                 public class SwissQrCodeContactException : Exception
                 {
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeContactException()
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeContactException(string message)
                         : base(message)
                     {
                     }
 
+                    [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                     public SwissQrCodeContactException(string message, Exception inner)
                         : base(message, inner)
                     {
@@ -1165,15 +1201,18 @@ namespace QRCoder
 
             public class SwissQrCodeException : Exception
             {
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public SwissQrCodeException()
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public SwissQrCodeException(string message)
                     : base(message)
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public SwissQrCodeException(string message, Exception inner)
                     : base(message, inner)
                 {
@@ -1209,6 +1248,7 @@ namespace QRCoder
             /// <param name="messageToGirocodeUser">Beneficiary to originator information. (optional)</param>
             /// <param name="version">Girocode version. Either 001 or 002. Default: 001.</param>
             /// <param name="encoding">Encoding of the Girocode payload. Default: ISO-8859-1</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public Girocode(string iban, string bic, string name, decimal amount, string remittanceInformation = "", TypeOfRemittance typeOfRemittance = TypeOfRemittance.Unstructured, string purposeOfCreditTransfer = "", string messageToGirocodeUser = "", GirocodeVersion version = GirocodeVersion.Version1, GirocodeEncoding encoding = GirocodeEncoding.ISO_8859_1)
             {
                 this.version = version;
@@ -1289,15 +1329,18 @@ namespace QRCoder
 
             public class GirocodeException : Exception
             {
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public GirocodeException()
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public GirocodeException(string message)
                     : base(message)
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public GirocodeException(string message, Exception inner)
                     : base(message, inner)
                 {
@@ -1327,6 +1370,7 @@ namespace QRCoder
             /// <param name="iban">IBAN</param>
             /// <param name="bic">BIC</param>
             /// <param name="reason">Reason (Verwendungszweck)</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BezahlCode(AuthorityType authority, string name, string account = "", string bnc = "", string iban = "", string bic = "", string reason = "") : this(authority, name, account, bnc, iban, bic, 0, string.Empty, 0, null, null, string.Empty, string.Empty, null, reason, 0, string.Empty, Currency.EUR, null, 1)
             {
             }
@@ -1348,6 +1392,7 @@ namespace QRCoder
             /// <param name="postingKey">Transfer Key (Textschlüssel, z.B. Spendenzahlung = 69)</param>
             /// <param name="currency">Currency (Währung)</param>
             /// <param name="executionDate">Execution date (Ausführungsdatum)</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BezahlCode(AuthorityType authority, string name, string account, string bnc, decimal amount, string periodicTimeunit = "", int periodicTimeunitRotation = 0, DateTime? periodicFirstExecutionDate = null, DateTime? periodicLastExecutionDate = null, string reason = "", int postingKey = 0, Currency currency = Currency.EUR, DateTime? executionDate = null) : this(authority, name, account, bnc, string.Empty, string.Empty, amount, periodicTimeunit, periodicTimeunitRotation, periodicFirstExecutionDate, periodicLastExecutionDate, string.Empty, string.Empty, null, reason, postingKey, string.Empty, currency, executionDate, 2)
             {
             }
@@ -1372,6 +1417,7 @@ namespace QRCoder
             /// <param name="sepaReference">SEPA reference (SEPA-Referenz)</param>
             /// <param name="currency">Currency (Währung)</param>
             /// <param name="executionDate">Execution date (Ausführungsdatum)</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BezahlCode(AuthorityType authority, string name, string iban, string bic, decimal amount, string periodicTimeunit = "", int periodicTimeunitRotation = 0, DateTime? periodicFirstExecutionDate = null, DateTime? periodicLastExecutionDate = null, string creditorId = "", string mandateId = "", DateTime? dateOfSignature = null, string reason = "", string sepaReference = "", Currency currency = Currency.EUR, DateTime? executionDate = null) : this(authority, name, string.Empty, string.Empty, iban, bic, amount, periodicTimeunit, periodicTimeunitRotation, periodicFirstExecutionDate, periodicLastExecutionDate, creditorId, mandateId, dateOfSignature, reason, 0, sepaReference, currency, executionDate, 3)
             {
             }
@@ -1402,6 +1448,7 @@ namespace QRCoder
             /// <param name="currency">Currency (Währung)</param>
             /// <param name="executionDate">Execution date (Ausführungsdatum)</param>
             /// <param name="internalMode">Only used for internal state handdling</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public BezahlCode(AuthorityType authority, string name, string account, string bnc, string iban, string bic, decimal amount, string periodicTimeunit = "", int periodicTimeunitRotation = 0, DateTime? periodicFirstExecutionDate = null, DateTime? periodicLastExecutionDate = null, string creditorId = "", string mandateId = "", DateTime? dateOfSignature = null, string reason = "", int postingKey = 0, string sepaReference = "", Currency currency = Currency.EUR, DateTime? executionDate = null, int internalMode = 0)
             {
                 //Loaded via "contact-constructor"
@@ -1851,15 +1898,18 @@ namespace QRCoder
 
             public class BezahlCodeException : Exception
             {
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public BezahlCodeException()
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public BezahlCodeException(string message)
                     : base(message)
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public BezahlCodeException(string message, Exception inner)
                     : base(message, inner)
                 {
@@ -1882,6 +1932,7 @@ namespace QRCoder
             /// <param name="end">End time of the event</param>
             /// <param name="allDayEvent">Is it a full day event?</param>
             /// <param name="encoding">Type of encoding (universal or iCal)</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public CalendarEvent(string subject, string description, string location, DateTime start, DateTime end, bool allDayEvent, EventEncoding encoding = EventEncoding.Universal)
             {
                 this.subject = subject;
@@ -2112,10 +2163,12 @@ namespace QRCoder
             /// <param name="password">Password of the SS proxy</param>
             /// <param name="method">Encryption type</param>
             /// <param name="tag">Optional tag line</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public ShadowSocksConfig(string hostname, int port, string password, Method method, string tag = null) :
                 this(hostname, port, password, method, null, tag)
             { }
 
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public ShadowSocksConfig(string hostname, int port, string password, Method method, string plugin, string pluginOption, string tag = null) :
                 this(hostname, port, password, method, new Dictionary<string, string>
                 {
@@ -2170,6 +2223,7 @@ namespace QRCoder
                 return j;
             }
 
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public ShadowSocksConfig(string hostname, int port, string password, Method method, Dictionary<string, string> parameters, string tag = null)
             {
                 this.hostname = Uri.CheckHostName(hostname) == UriHostNameType.IPv6
@@ -2257,15 +2311,18 @@ namespace QRCoder
 
             public class ShadowSocksConfigException : Exception
             {
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public ShadowSocksConfigException()
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public ShadowSocksConfigException(string message)
                     : base(message)
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public ShadowSocksConfigException(string message, Exception inner)
                     : base(message, inner)
                 {
@@ -2286,6 +2343,7 @@ namespace QRCoder
             /// <param name="txPaymentId">Payment id</param>
             /// <param name="recipientName">Receipient's name</param>
             /// <param name="txDescription">Reference text / payment description</param>
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public MoneroTransaction(string address, float? txAmount = null, string txPaymentId = null, string recipientName = null, string txDescription = null)
             {
                 if (string.IsNullOrEmpty(address))
@@ -2312,15 +2370,18 @@ namespace QRCoder
 
             public class MoneroTransactionException : Exception
             {
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public MoneroTransactionException()
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public MoneroTransactionException(string message)
                     : base(message)
                 {
                 }
 
+                [Obsolete(ObsoleteMessages.UseQRCoderPng)]
                 public MoneroTransactionException(string message, Exception inner)
                     : base(message, inner)
                 {
@@ -2356,10 +2417,12 @@ namespace QRCoder
                 return (value.Length <= maxLength) ? value : value.Substring(0, maxLength);
             }
 
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public SlovenianUpnQr(string payerName, string payerAddress, string payerPlace, string recipientName, string recipientAddress, string recipientPlace, string recipientIban, string description, double amount, string recipientSiModel = "SI00", string recipientSiReference = "", string code = "OTHR") :
                 this(payerName, payerAddress, payerPlace, recipientName, recipientAddress, recipientPlace, recipientIban, description, amount, null, recipientSiModel, recipientSiReference, code)
             { }
 
+            [Obsolete(ObsoleteMessages.UseQRCoderPng)]
             public SlovenianUpnQr(string payerName, string payerAddress, string payerPlace, string recipientName, string recipientAddress, string recipientPlace, string recipientIban, string description, double amount, DateTime? deadline, string recipientSiModel = "SI99", string recipientSiReference = "", string code = "OTHR")
             {
                 _payerName = LimitLength(payerName.Trim(), 33);
@@ -3098,6 +3161,7 @@ namespace QRCoder
 
 
 
+        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static bool ChecksumMod10(string digits)
         {
 			if (string.IsNullOrEmpty(digits) || digits.Length < 2)
