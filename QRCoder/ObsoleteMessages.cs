@@ -2,6 +2,6 @@
 {
     internal static class ObsoleteMessages
     {
-        internal const string UseQRCoderPng = "Use QRCoder-PNG nuget package as replacement with no ImageSharp dependency";
+        internal const string UseQRCoderPng = "Use QRCoder-Png nuget package as replacement with no ImageSharp dependency";
     }
 }
