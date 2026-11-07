@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,6 @@ namespace QRCoder
     {
         public List<BitArray> ModuleMatrix { get; set; }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public QRCodeData(int version)
         {
             this.Version = version;
@@ -22,12 +20,10 @@ namespace QRCoder
             for (var i = 0; i < size; i++)
                 this.ModuleMatrix.Add(new BitArray(size));
         }
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public QRCodeData(string pathToRawData, Compression compressMode) : this(File.ReadAllBytes(pathToRawData), compressMode)
         {
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public QRCodeData(byte[] rawData, Compression compressMode)
         {
             var bytes = new List<byte>(rawData);
@@ -90,7 +86,6 @@ namespace QRCoder
 
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetRawData(Compression compressMode)
         {
             var bytes = new List<byte>();
@@ -153,7 +148,6 @@ namespace QRCoder
             return rawData;
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public void SaveRawData(string filePath, Compression compressMode)
         {
             File.WriteAllBytes(filePath, GetRawData(compressMode));
@@ -166,7 +160,6 @@ namespace QRCoder
             return 21 + (version - 1) * 4;
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public void Dispose()
         {
             this.ModuleMatrix = null;

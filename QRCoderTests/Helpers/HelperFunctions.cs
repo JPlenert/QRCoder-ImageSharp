@@ -24,8 +24,15 @@ namespace QRCoderTests.Helpers
             return ByteArrayToHash(imgBytes);
         }
 
-        public static Image LoadAssetImage() =>
-            Image.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream("QRCoderTests.assets.noun_software engineer_2909346.png"));
+        public static byte[] LoadAssetImage()
+        {
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("QRCoderTests.assets.noun_software engineer_2909346.png"))
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
 
         public static string LoadAssetSvg()
         {
@@ -43,13 +50,6 @@ namespace QRCoderTests.Helpers
         public static string StringToHash(string data)
         {
             return ByteArrayToHash(Encoding.UTF8.GetBytes(data));
-        }
-
-        public static void TestByDecode(Image<Rgba32> image, string desiredContent)
-        {
-            ZXing.ImageSharp.BarcodeReader<Rgba32> reader = new ZXing.ImageSharp.BarcodeReader<Rgba32>();
-            ZXing.Result result = reader.Decode(image);
-            result.Text.ShouldBe(desiredContent);
         }
 
         public static void TestByDecode(byte[] pngCodeGfx, string desiredContent)
@@ -76,9 +76,6 @@ namespace QRCoderTests.Helpers
             }
         }
 
-        public static void TestByHash(Image<Rgba32> image, string desiredHash) =>
-            BitmapToHash(image).ShouldBe(desiredHash);
-
         public static void TestByHash(byte[] pngCodeGfx, string desiredHash)
         {
             using (var mStream = new MemoryStream(pngCodeGfx))
@@ -91,14 +88,6 @@ namespace QRCoderTests.Helpers
 
         public static void TestByHash(string svg, string desiredHash) =>
             ByteArrayToHash(UTF8Encoding.UTF8.GetBytes(desiredHash));
-
-        public static void TestImageToFile(string path, string testName, Image<Rgba32> image)
-        {
-            if (String.IsNullOrEmpty(path))
-                return;
-
-            image.Save(Path.Combine(path, $"qrtest_{testName}.png"));
-        }
 
         public static void TestImageToFile(string path, string testName, byte[] data)
         {
@@ -117,7 +106,7 @@ namespace QRCoderTests.Helpers
             File.WriteAllText(Path.Combine(path, $"qrtestSVG_{testName}.svg"), svg);
         }
 
-        public static Image<Rgba32> GenerateImage(string content, Func<QRCode, Image<Rgba32>> getGraphic)
+        public static byte[] GenerateImage(string content, Func<QRCode, byte[]> getGraphic)
         {
             QRCodeGenerator gen = new QRCodeGenerator();
             QRCodeData data = gen.CreateQrCode(content, QRCodeGenerator.ECCLevel.H);

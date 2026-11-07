@@ -10,10 +10,8 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public AsciiQRCode() { }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public AsciiQRCode(QRCodeData data) : base(data) { }
 
        
@@ -25,7 +23,6 @@ namespace QRCoder
         /// <param name="whiteSpaceString">String for use as white modules (whitespace). In case of string make sure darkColorString has the same length.</param>
         /// <param name="endOfLine">End of line separator. (Default: \n)</param>
         /// <returns></returns>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string GetGraphic(int repeatPerModule, string darkColorString = "██", string whiteSpaceString = "  ", bool drawQuietZones = true, string endOfLine = "\n")
         {
             return string.Join(endOfLine, GetLineByLineGraphic(repeatPerModule, darkColorString, whiteSpaceString, drawQuietZones));
@@ -39,7 +36,6 @@ namespace QRCoder
         /// <param name="darkColorString">String for use as dark color modules. In case of string make sure whiteSpaceString has the same length.</param>
         /// <param name="whiteSpaceString">String for use as white modules (whitespace). In case of string make sure darkColorString has the same length.</param>
         /// <returns></returns>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public string[] GetLineByLineGraphic(int repeatPerModule, string darkColorString = "██", string whiteSpaceString = "  ", bool drawQuietZones = true)
         {
             var qrCode = new List<string>();
@@ -71,7 +67,6 @@ namespace QRCoder
 
     public static class AsciiQRCodeHelper
     {
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static string GetQRCode(string plainText, int pixelsPerModule, string darkColorString, string whiteSpaceString, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false, EciMode eciMode = EciMode.Default, int requestedVersion = -1, string endOfLine = "\n", bool drawQuietZones = true)
         {
             using (var qrGenerator = new QRCodeGenerator())

@@ -4,24 +4,22 @@
     <TargetFrameworks>netstandard2.0;netstandard2.1;net10.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <!-- Public API is deprecated; suppress internal usage warnings -->
-    <NoWarn>$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>QRCoder-ImageSharp</PackageId>
-    <Version>0.10.1</Version>
+    <PackageId>QRCoder</PackageId>
+    <Version>0.11.0</Version>
     <Authors>Raffael Herrmann, Joerg Plenert</Authors>
     <PackageOwners>Joerg Plenert</PackageOwners>
     <AssemblyName>QRCoder</AssemblyName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/JPlenert/QRCoder-Png</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/JPlenert/QRCoder-Pdf</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <PackageTags>c# csharp qr qrcoder qrcode qr-generator qr-code-generator</PackageTags>
-    <RepositoryUrl>https://github.com/JPlenert/QRCoder-Png.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/JPlenert/QRCoder-Pdf.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes. Based on ImageSharp to provide plattform independency.</Description>
+    <Description>QRCoder is a simple library, written in C#.NET, which enables you to create QR codes. Renders PNG, SVG, PDF and more without any external imaging dependency, fully platform independent.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Raffael Herrmann, Joerg Plenert</Copyright>
     <PackageReleaseNotes>Based on version 1.4.3 of QRCoder</PackageReleaseNotes>
@@ -33,7 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" />
+    <InternalsVisibleTo Include="QRCoderTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
 

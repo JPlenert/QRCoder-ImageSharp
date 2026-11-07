@@ -1,4 +1,4 @@
-﻿using SixLabors.ImageSharp;
+﻿using QRCoder.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,10 +18,8 @@ namespace QRCoder
         /// <summary>
         /// Constructor without params to be used in COM Objects connections
         /// </summary>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PdfByteQRCode() { }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public PdfByteQRCode(QRCodeData data) : base(data) { }
 
         /// <summary>
@@ -29,25 +27,9 @@ namespace QRCoder
         /// </summary>
         /// <param name="pixelsPerModule"></param>
         /// <returns></returns>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public byte[] GetGraphic(int pixelsPerModule)
         {
             return GetGraphic(pixelsPerModule, "#000000", "#ffffff");
-        }
-
-        /// <summary>
-        /// Takes hexadecimal color string #000000 and returns byte[]{ 0, 0, 0 }
-        /// </summary>
-        /// <param name="colorString">Color in HEX format like #ffffff</param>
-        /// <returns></returns>
-        private byte[] HexColorToByteArray(string colorString)
-        {
-            if (colorString.StartsWith("#"))
-                colorString = colorString.Substring(1);
-            byte[] byteColor = new byte[colorString.Length / 2];
-            for (int i = 0; i < byteColor.Length; i++)
-                byteColor[i] = byte.Parse(colorString.Substring(i * 2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-            return byteColor;
         }
 
         /// <summary>
@@ -57,25 +39,17 @@ namespace QRCoder
         /// <param name="darkColorHtmlHex"></param>
         /// <param name="lightColorHtmlHex"></param>
         /// <param name="dpi"></param>
-        /// <param name="jpgQuality"></param>
         /// <returns></returns>
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
-        public byte[] GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, int dpi = 150, long jpgQuality = 85)
+        public byte[] GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, int dpi = 150)
         {
-            byte[] jpgArray = null;
-            var imgSize = QrCodeData.ModuleMatrix.Count * pixelsPerModule;
+            var imgSize = ModuleScanlines.GetSize(QrCodeData.ModuleMatrix, pixelsPerModule, true);
             var pdfMediaSize = (imgSize * 72 / dpi).ToString(CultureInfo.InvariantCulture);
+            var darkColor = QRColor.Parse(darkColorHtmlHex);
+            var lightColor = QRColor.Parse(lightColorHtmlHex);
 
-            // Get QR code image
-            QRCode qr = new QRCode(QrCodeData);
-            Image img = qr.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex);
-
-            // Transform to JPG
-            using (var ms = new MemoryStream())
-            {
-                img.SaveAsJpeg(ms);
-                jpgArray = ms.ToArray();
-            }
+            // 1-bit image (dark = 0, light = 1) with PNG row filters, as supported by FlateDecode's predictor 15
+            var imgData = Zlib.Compress(ModuleScanlines.Build1Bit(QrCodeData.ModuleMatrix, pixelsPerModule, true));
+            var palette = $"{darkColor.R:X2}{darkColor.G:X2}{darkColor.B:X2}{lightColor.R:X2}{lightColor.G:X2}{lightColor.B:X2}";
             
             //Create PDF document
             using (var stream = new MemoryStream())
@@ -113,7 +87,7 @@ namespace QRCoder
                     "/Type /Page\r\n" +
                     "/Parent 2 0 R\r\n" +
                     "/MediaBox [0 0 " + pdfMediaSize + " " + pdfMediaSize + "]\r\n" +
-                    "/Resources << /ProcSet [ /PDF /ImageC ]\r\n" +
+                    "/Resources << /ProcSet [ /PDF /ImageC /ImageI ]\r\n" +
                     "/XObject << /Im1 4 0 R >> >>\r\n" +
                     "/Contents 3 0 R\r\n" +
                     ">> ]\r\n" +
@@ -147,14 +121,15 @@ namespace QRCoder
                     "/Type /XObject\r\n" +
                     "/Subtype /Image\r\n" +
                     "/Width " + imgSize.ToString() + "/Height " + imgSize.ToString() + "/Length 5 0 R\r\n" +
-                    "/Filter /DCTDecode\r\n" +
-                    "/ColorSpace /DeviceRGB\r\n" +
-                    "/BitsPerComponent 8\r\n" +
+                    "/Filter /FlateDecode\r\n" +
+                    "/DecodeParms << /Predictor 15 /Colors 1 /BitsPerComponent 1 /Columns " + imgSize.ToString() + " >>\r\n" +
+                    "/ColorSpace [ /Indexed /DeviceRGB 1 <" + palette + "> ]\r\n" +
+                    "/BitsPerComponent 1\r\n" +
                     ">>\r\n" +
                     "stream\r\n"
                 );
                 writer.Flush();
-                stream.Write(jpgArray, 0, jpgArray.Length);
+                stream.Write(imgData, 0, imgData.Length);
                 writer.Write(
                     "\r\n" +
                     "endstream\r\n" +
@@ -166,7 +141,7 @@ namespace QRCoder
 
                 writer.Write(
                     xrefs.Count.ToString() + " 0 obj\r\n" +
-                    jpgArray.Length.ToString() + " endobj\r\n"
+                    imgData.Length.ToString() + " endobj\r\n"
                 );
 
                 writer.Flush();
@@ -203,7 +178,6 @@ namespace QRCoder
 
     public static class PdfByteQRCodeHelper
     {
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string plainText, int pixelsPerModule, string darkColorHtmlHex,
             string lightColorHtmlHex, ECCLevel eccLevel, bool forceUtf8 = false, bool utf8BOM = false,
             EciMode eciMode = EciMode.Default, int requestedVersion = -1)
@@ -216,7 +190,6 @@ namespace QRCoder
                 return qrCode.GetGraphic(pixelsPerModule, darkColorHtmlHex, lightColorHtmlHex);
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public static byte[] GetQRCode(string txt, ECCLevel eccLevel, int size)
         {
             using (var qrGen = new QRCodeGenerator())

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace QRCoder
+﻿namespace QRCoder
 {
     public abstract class AbstractQRCode
     {
@@ -21,7 +19,6 @@ namespace QRCoder
             this.QrCodeData = data;
         }
 
-        [Obsolete(ObsoleteMessages.UseQRCoderPng)]
         public void Dispose()
         {
             this.QrCodeData?.Dispose();
